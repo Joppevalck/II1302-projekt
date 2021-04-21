@@ -1,16 +1,19 @@
 <template>
   <div id="app">
     <HelloBoys msg="Hello Pangpangpang Bois"/>
+    <SmartBinContainer />
   </div>
 </template>
 
 <script>
 import HelloBoys from './components/HelloBoys.vue'
+import SmartBinContainer from './components/SmartBinContainer.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloBoys
+    HelloBoys,
+    SmartBinContainer
   }
 }
 </script>
