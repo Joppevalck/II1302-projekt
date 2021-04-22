@@ -84,7 +84,6 @@ async function main() {
 
 const cosmos = {
     async getAllData() {
-        console.log(`Querying container: Items`);
 
         // query to return all items
         const querySpec = {
@@ -96,7 +95,6 @@ const cosmos = {
         .query(querySpec)
         .fetchAll();
 
-        console.log(items);
         return items;
     }
 }
