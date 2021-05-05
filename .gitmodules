@@ -1,0 +1,3 @@
+[submodule "IOTSoptunna-Hardware"]
+	path = IOTSoptunna-Hardware
+	url = https://github.com/joarcool/IOTSoptunna-Hardware.git
