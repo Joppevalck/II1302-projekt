@@ -4,7 +4,31 @@
     <base-header class="pb-6 pb-8 pt-5 pt-md-8 bg-gradient-success">
       <!-- Card stats -->
       <b-row>
-        <b-col xl="3" md="6">
+
+        <b-col v-for="card in cards" :key=card.title xl="3" md="6">
+          <stats-card :title="card.title"
+                      :type="card.type"
+                      :sub-title="card.subtitle"
+                      :icon="card.icon"
+                      :class="card.class">
+
+            <template slot="footer">
+              <BaseProgress :value="card.fullness" 
+                            label="Full"
+                            :showLabel="! card.fullness > 80"
+                            striped="true"
+                            animated="true"
+                            height="5"
+                            />
+              <span class="text-success mr-2">{{card.fullness}}%</span>
+              <span class="text-nowrap">At {{new Date(Date.now()).toUTCString()}}</span>
+            </template>
+          </stats-card>
+        </b-col>
+
+
+
+        <!-- <b-col xl="3" md="6">
           <stats-card title="Total traffic"
                       type="gradient-red"
                       sub-title="350,897"
@@ -58,7 +82,7 @@
           </stats-card>
         </b-col>
 
-        <!-- last card -->
+        
         <b-col xl="3" md="6">
           <stats-card title="Poopiface"
                       type="gradient-green"
@@ -71,13 +95,13 @@
               <span class="text-nowrap">Since last wednesday</span>
             </template>
           </stats-card>
-        </b-col>
+        </b-col> -->
       </b-row>
     </base-header>
 
     <!--Charts-->
     <b-container fluid class="mt--7">
-      <b-row>
+      <!-- <b-row>
         <b-col xl="8" class="mb-5 mb-xl-0">
           <card type="default" header-classes="bg-transparent">
             <b-row align-v="center" slot="header">
@@ -133,18 +157,18 @@
             </bar-chart>
           </card>
         </b-col>
-      </b-row>
+      </b-row> -->
       <!-- End charts-->
 
       <!--Tables-->
-      <b-row class="mt-5">
+      <!-- <b-row class="mt-5">
         <b-col xl="8" class="mb-5 mb-xl-0">
           <page-visits-table></page-visits-table>
         </b-col>
         <b-col xl="4" class="mb-5 mb-xl-0">
           <social-traffic-table></social-traffic-table>
         </b-col>
-      </b-row>
+      </b-row> -->
       <!--End tables-->
     </b-container>
 
@@ -177,8 +201,8 @@
       return {
         bigLineChart: {
           allData: [
-            [0, 20, 10, 30, 15, 40, 20, 60, 60],
-            [0, 20, 5, 25, 10, 30, 15, 40, 40]
+            [0, 20, 10, 30, 15, 40, 20, 10],
+            [0, 20, 5, 25, 10, 30, 15, 40]
           ],
           activeIndex: 0,
           chartData: {
@@ -188,7 +212,7 @@
                 data: [0, 20, 10, 30, 15, 40, 20, 60, 60, 100, 90, 20, 34, 67],
               }
             ],
-            labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'mon', 'yues', 'asdk', 'asda'],
+            labels: ['Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec'],
           },
           extraOptions: chartConfigs.blueChartOptions,
         },
@@ -197,11 +221,54 @@
             labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             datasets: [{
               label: 'Sales',
-              data: [25, 20, 30, 22, 17, 29]
+              data: [25, 20, 30, 22, 17, 5]
             }]
           },
           extraOptions: chartConfigs.blueChartOptions
-        }
+        },
+
+        cards: [
+          {
+            title: "Smartbin 1",
+            type: "gradient-red",
+            "subtitle": "350,897",
+            icon:"ni ni-active-40",
+            class:"mb-4",
+            fullness: 3.48
+          },
+          {
+            title: "Smartbin 2",
+            type: "gradient-orange",
+            "subtitle": "2,356",
+            icon:"ni ni-chart-pie-35",
+            class:"mb-4",
+            fullness: 11.5
+          },
+          {
+            title: "Smartbin 3",
+            type: "gradient-orange",
+            "subtitle": "2,356",
+            icon:"ni ni-chart-pie-35",
+            class:"mb-4",
+            fullness: 50
+          },
+          {
+            title: "Smartbin 4",
+            type: "gradient-orange",
+            "subtitle": "2,356",
+            icon:"ni ni-chart-pie-35",
+            class:"mb-4",
+            fullness: 90.4
+          },
+          {
+            title: "Smartbin 5",
+            type: "gradient-green",
+            "subtitle": "10000%",
+            icon:"ni ni-chart-bar-32",
+            class:"mb-4",
+            fullness: 110.96
+          }
+        ]
       };
     },
     methods: {
