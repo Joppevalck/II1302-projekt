@@ -19,6 +19,7 @@
                             striped="true"
                             animated="true"
                             height="5"
+                            :type="progressBarColor(card.fullness)"
                             />
               <span class="text-success mr-2">{{card.fullness}}%</span>
               <span class="text-nowrap">At {{new Date(Date.now()).toUTCString()}}</span>
@@ -242,7 +243,7 @@
             "subtitle": "2,356",
             icon:"ni ni-chart-pie-35",
             class:"mb-4",
-            fullness: 11.5
+            fullness: 50
           },
           {
             title: "Smartbin 3",
@@ -250,7 +251,7 @@
             "subtitle": "2,356",
             icon:"ni ni-chart-pie-35",
             class:"mb-4",
-            fullness: 50
+            fullness: 63
           },
           {
             title: "Smartbin 4",
@@ -266,7 +267,7 @@
             "subtitle": "10000%",
             icon:"ni ni-chart-bar-32",
             class:"mb-4",
-            fullness: 110.96
+            fullness: 100
           }
         ]
       };
@@ -284,6 +285,10 @@
         };
         this.bigLineChart.chartData = chartData;
         this.bigLineChart.activeIndex = index;
+      },
+
+      progressBarColor(fullness) {
+        return fullness < 60 && "success" || fullness < 80 && "warning" || "danger"
       }
     },
     mounted() {
