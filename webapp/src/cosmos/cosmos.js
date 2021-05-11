@@ -14,89 +14,123 @@ const { endpoint, key, databaseId, containerId } = config;
 const client = new CosmosClient({ endpoint, key });
 
 const database = client.database(databaseId);
-const container = database.container(containerId);
 
-async function main() {
-    // <CreateClientObjectDatabaseContainer>
-
-    // Make sure Tasks database is already setup. If not, create it.
-    //   await dbContext.create(client, databaseId, containerId);
-    // </CreateClientObjectDatabaseContainer>
-
-    try {
-        // <QueryItems>
-        console.log(`Querying container: Items`);
-
-        // query to return all items
-        const querySpec = {
-        query: "SELECT * from c"
-        };
-
-        // read all items in the Items container
-        const { resources: items } = await container.items
-        .query(querySpec)
-        .fetchAll();
-
-        items.forEach(item => {
-        console.log(`${item.id} - ${item.description}`);
-        });
-        // </QueryItems>
-
-        // <CreateItem>
-        /** Create new item
-        * newItem is defined at the top of this file
-        */
-        const { resource: createdItem } = await container.items.create(newItem);
-
-        console.log(`\r\nCreated new item: ${createdItem.id} - ${createdItem.description}\r\n`);
-        // </CreateItem>
-
-        // <UpdateItem>
-        /** Update item
-        * Pull the id and partition key value from the newly created item.
-        * Update the isComplete field to true.
-        */
-        const { id, category } = createdItem;
-
-        createdItem.isComplete = true;
-
-        const { resource: updatedItem } = await container
-        .item(id, category)
-        .replace(createdItem);
-
-        console.log(`Updated item: ${updatedItem.id} - ${updatedItem.description}`);
-        console.log(`Updated isComplete to ${updatedItem.isComplete}\r\n`);
-        // </UpdateItem>
-
-        // <DeleteItem>
-        /**
-        * Delete item
-        * Pass the id and partition key value to delete the item
-        */
-        // const { resource: result } = await container.item(id, category).delete();
-        // console.log(`Deleted item with id: ${id}`);
-        // </DeleteItem>
-
-    } catch (err) {
-        console.log(err.message);
-    }
-}
+const deviceContainer = database.container(containerId.device);
+const dataContainer = database.container(containerId.data);
 
 const cosmos = {
     async getAllData() {
-
         // query to return all items
         const querySpec = {
-        query: "SELECT * from c"
+            query: "SELECT * from c"
         };
-
+        
         // read all items in the Items container
-        const { resources: items } = await container.items
+        const { resources: items } = await dataContainer.items
         .query(querySpec)
         .fetchAll();
 
         return items;
+    },
+
+    async getAllLatest() {
+        const dataQuery = {
+            query: "SELECT c.deviceId, MAX(c._ts) AS timeStamp FROM c GROUP BY c.deviceId",
+        }
+        const { resources: data } = await dataContainer.items
+        .query(dataQuery)
+        .fetchAll();
+
+        const deviceQuery = {
+            query: "SELECT * FROM c"
+        }
+        const { resources: deviceData } = await deviceContainer.items
+        .query(deviceQuery)
+        .fetchAll();        
+        
+        
+
+
+        return items;
+    },
+
+    async getLatest(deviceId){
+        const query = {
+            query: "SELECT * FROM c WHERE c.deviceId = @deviceId ORDER BY c._ts DESC OFFSET 0 LIMIT 1",
+            parameters: [{name: "@deviceId", value: deviceId}]
+        }
+        const { resources: items } = await dataContainer.items
+        .query(querySpec)
+        .fetchAll(); 
+        
+        return items;
     }
 }
 
-module.exports = {cosmos, main}
+export default cosmos;
+
+// async function main() {
+//     // <CreateClientObjectDatabaseContainer>
+
+//     // Make sure Tasks database is already setup. If not, create it.
+//     //   await dbContext.create(client, databaseId, containerId);
+//     // </CreateClientObjectDatabaseContainer>
+
+//     try {
+//         // <QueryItems>
+//         console.log(`Querying container: Items`);
+
+//         // query to return all items
+//         const querySpec = {
+//         query: "SELECT * from c"
+//         };
+
+//         // read all items in the Items container
+//         const { resources: items } = await container.items
+//         .query(querySpec)
+//         .fetchAll();
+
+//         items.forEach(item => {
+//         console.log(`${item.id} - ${item.description}`);
+//         });
+//         // </QueryItems>
+
+//         // <CreateItem>
+//         /** Create new item
+//         * newItem is defined at the top of this file
+//         */
+//         const { resource: createdItem } = await container.items.create(newItem);
+
+//         console.log(`\r\nCreated new item: ${createdItem.id} - ${createdItem.description}\r\n`);
+//         // </CreateItem>
+
+//         // <UpdateItem>
+//         /** Update item
+//         * Pull the id and partition key value from the newly created item.
+//         * Update the isComplete field to true.
+//         */
+//         const { id, category } = createdItem;
+
+//         createdItem.isComplete = true;
+
+//         const { resource: updatedItem } = await container
+//         .item(id, category)
+//         .replace(createdItem);
+
+//         console.log(`Updated item: ${updatedItem.id} - ${updatedItem.description}`);
+//         console.log(`Updated isComplete to ${updatedItem.isComplete}\r\n`);
+//         // </UpdateItem>
+
+//         // <DeleteItem>
+//         /**
+//         * Delete item
+//         * Pass the id and partition key value to delete the item
+//         */
+//         // const { resource: result } = await container.item(id, category).delete();
+//         // console.log(`Deleted item with id: ${id}`);
+//         // </DeleteItem>
+
+//     } catch (err) {
+//         console.log(err.message);
+//     }
+// }

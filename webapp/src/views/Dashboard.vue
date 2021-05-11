@@ -5,27 +5,29 @@
       <!-- Card stats -->
       <b-row>
 
-        <b-col v-for="card in cards" :key=card.title xl="3" md="6">
-          <stats-card :title="card.title"
-                      :type="card.type"
-                      :sub-title="card.subtitle"
-                      :icon="card.icon"
-                      :class="card.class">
+        <b-col v-for="s in smartbins" :key=s.deviceId xl="3" md="6">
+          <stats-card :title="s.location"
+                      type="gradient-green"
+                      :sub-title="s.name"
+                      icon="ni ni-chart-bar-32"
+                      class="mb-4">
 
             <template slot="footer">
-              <BaseProgress :value="card.fullness" 
+              <BaseProgress :value="s.percentage" 
                             label="Full"
-                            :showLabel="! card.fullness > 80"
+                            :showLabel="! s.percentage > 80"
                             striped="true"
                             animated="true"
                             height="5"
-                            :type="progressBarColor(card.fullness)"
+                            :type="progressBarColor(s.percentage)"
                             />
-              <span class="text-success mr-2">{{card.fullness}}%</span>
-              <span class="text-nowrap">At {{new Date(Date.now()).toUTCString()}}</span>
+              <span class="text-success mr-2">{{percentage(s)}}%</span>
+              <span class="text-nowrap">At {{new Date(s.timestamp).toUTCString()}}</span>
             </template>
           </stats-card>
         </b-col>
+
+        <!-- <div>{{smartbins}}</div> -->
 
 
 
@@ -102,7 +104,7 @@
 
     <!--Charts-->
     <b-container fluid class="mt--7">
-      <!-- <b-row>
+      <b-row>
         <b-col xl="8" class="mb-5 mb-xl-0">
           <card type="default" header-classes="bg-transparent">
             <b-row align-v="center" slot="header">
@@ -141,7 +143,7 @@
           </card>
         </b-col>
 
-        <b-col xl="4" class="mb-5 mb-xl-0">
+        <!-- <b-col xl="4" class="mb-5 mb-xl-0">
           <card header-classes="bg-transparent">
             <b-row align-v="center" slot="header">
               <b-col>
@@ -157,8 +159,8 @@
             >
             </bar-chart>
           </card>
-        </b-col>
-      </b-row> -->
+        </b-col> -->
+      </b-row>
       <!-- End charts-->
 
       <!--Tables-->
@@ -189,6 +191,9 @@
   import SocialTrafficTable from './Dashboard/SocialTrafficTable';
   import PageVisitsTable from './Dashboard/PageVisitsTable';
 
+  // database api
+  import cosmos from '../cosmos/cosmos.js';
+
   export default {
     components: {
       LineChart,
@@ -202,8 +207,8 @@
       return {
         bigLineChart: {
           allData: [
-            [0, 20, 10, 30, 15, 40, 20, 10],
-            [0, 20, 5, 25, 10, 30, 15, 40]
+            // [0, 20, 10, 30, 15, 40, 20, 10],
+            // [0, 20, 5, 25, 10, 30, 15, 40]
           ],
           activeIndex: 0,
           chartData: {
@@ -213,20 +218,20 @@
                 data: [0, 20, 10, 30, 15, 40, 20, 60, 60, 100, 90, 20, 34, 67],
               }
             ],
-            labels: ['Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec'],
+            labels: ['Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec', 'wd', '2e2', '2edwdc', 'qwd'],
           },
           extraOptions: chartConfigs.blueChartOptions,
         },
-        redBarChart: {
-          chartData: {
-            labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            datasets: [{
-              label: 'Sales',
-              data: [25, 20, 30, 22, 17, 5]
-            }]
-          },
-          extraOptions: chartConfigs.blueChartOptions
-        },
+        // redBarChart: {
+        //   chartData: {
+        //     labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        //     datasets: [{
+        //       label: 'Sales',
+        //       data: [25, 20, 30, 22, 17, 5]
+        //     }]
+        //   },
+        //   extraOptions: chartConfigs.blueChartOptions
+        // },
 
         cards: [
           {
@@ -269,30 +274,90 @@
             class:"mb-4",
             fullness: 100
           }
+        ],
+        mockBins: [
+          {
+            "deviceId": "1",
+            "name": "Williams Smartbin",
+            "location": "Vardagsrum",
+            "minDist": 10,
+            "maxDist": 110,
+            "distance": 5,
+            "timestamp": Date.now()
+          },
+          {
+            "deviceId": "2",
+            "name": "Jockes Smartbin",
+            "location": "Sovrum",
+            "minDist": 20,
+            "maxDist": 120,
+            "distance": 40,
+            "timestamp": Date.now()
+          },
+          {
+            "deviceId": "3",
+            "name": "Joppes Smartbin",
+            "location": "Under kudden",
+            "minDist": 10,
+            "maxDist": 110,
+            "distance": 100,
+            "timestamp": Date.now()
+          },
+          {
+            "deviceId": "4",
+            "name": "Joars Smartbin",
+            "location": "Garaget",
+            "minDist": 10,
+            "maxDist": 110,
+            "distance": 40,
+            "timestamp": Date.now()
+          },
+          {
+            "deviceId": "5",
+            "name": "Axels Smartbin",
+            "location": "Köket",
+            "minDist": 10,
+            "maxDist": 110,
+            "distance": 80,
+            "timestamp": Date.now()
+          }
         ]
       };
     },
+    computed: {
+      smartbins() {
+        return this.mockBins.map(s => {s.percentage = this.percentage(s); return s})
+      }
+    },
     methods: {
       initBigChart(index) {
-        let chartData = {
-          datasets: [
-            {
-              label: 'Performance',
-              data: this.bigLineChart.allData[index]
-            }
-          ],
-          labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        };
-        this.bigLineChart.chartData = chartData;
-        this.bigLineChart.activeIndex = index;
+        // let chartData = {
+        //   datasets: [
+        //     {
+        //       label: 'Performance',
+        //       data: this.bigLineChart.allData[index]
+        //     }
+        //   ],
+        //   labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        // };
+        // this.bigLineChart.chartData = chartData;
+        // this.bigLineChart.activeIndex = index;
       },
-
       progressBarColor(fullness) {
         return fullness < 60 && "success" || fullness < 80 && "warning" || "danger"
+      },
+      allData() {
+        cosmos.getAllData().then(res => this.smartbins = res)
+      },
+      percentage(s) {
+        // let minDist = 10;
+        // let maxDist = 110;
+        return (s.distance - s.minDist) / (s.maxDist - s.minDist) * 100
       }
     },
     mounted() {
       this.initBigChart(0);
+      // this.allData();
     }
   };
 </script>
