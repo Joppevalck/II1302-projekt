@@ -18,34 +18,43 @@
           </b-form-group>
         </b-form>
       </b-navbar-nav>
-      <b-row>
 
+
+      <b-row>
         <b-col v-for="s in smartbins" :key=s.deviceId xl="3" md="6">
           <stats-card :title="s.location"
-                      type="gradient-green"
+                      :type="iconColor(s)"
                       :sub-title="s.name"
                       icon="ni ni-chart-bar-32"
                       class="mb-4">
 
             <template slot="footer">
-              <BaseProgress :value="s.percentage" 
+              <BaseProgress v-if="s.percentage"
+                            :value="s.percentage" 
                             label="Full"
                             :showLabel="! s.percentage > 80"
-                            striped="true"
-                            animated="true"
-                            height="5"
+                            :striped="true"
+                            :animated="true"
+                            :height="5"
                             :type="progressBarColor(s.percentage)"
                             />
-              <span class="text-success mr-2">{{percentage(s)}}%</span>
-              <span class="text-nowrap">At {{new Date(s.timestamp).toUTCString()}}</span>
+              <template v-if="s.percentage">
+                <span class="text-success mr-2">{{s.percentage.toFixed(1)}}%</span>
+                <span class="text-nowrap">At {{new Date(s.timestamp).toUTCString()}}</span>
+              </template>
+              <template v-else>
+                <span class="text-nowrap text-info mr-2">No data to display</span>
+              </template>
+
             </template>
           </stats-card>
         </b-col>
 
         <div>
-          <b-button @click="loadData">Click me</b-button>
+          <b-button @click="getAllDevicesLatestData">Click me</b-button>
         </div>
-        <div>{{smartbins}}</div>
+
+        <!-- <div>{{allMeasurementData}}</div> -->
 
 
 
@@ -363,14 +372,22 @@
             "maxDist": 110,
             "timestamp": Date.now()
           }
-        ]
+        ],
+        allMeasurementData: [],
+        allDevices: []
       };
     },
     computed: {
       smartbins() {
-        return this.mockBins.map(s => {
-          s.distance = this.mockData.find(obj => obj.deviceId === s.deviceId).distance;
-          s.percentage = this.percentage(s); 
+        return this.allDevices.map(s => {
+          let data = this.allMeasurementData.find(obj => obj.deviceId === s.deviceId);
+          // data = {"distance": 75};
+          if (data) {
+            s.distance = data.distance || null;
+            s.timestamp = data.timestamp * 1000 || null;
+            console.log(s.timestamp)
+            s.percentage = this.percentage(s); 
+          }
           return s
         });
       }
@@ -392,21 +409,27 @@
       progressBarColor(fullness) {
         return fullness < 60 && "success" || fullness < 80 && "warning" || "danger"
       },
-      allData() {
-        cosmos.getAllData().then(res => this.smartbins = res)
+      getAllDevicesLatestData() {
+        cosmos.getAllDevicesLatestData().then(res => this.allMeasurementData = res)
+      },
+      getAllDevices() {
+        cosmos.getAllDevices().then(res => this.allDevices = res)
       },
       percentage(s) {
-        // let minDist = 10;
-        // let maxDist = 110;
-        return (s.distance - s.minDist) / (s.maxDist - s.minDist) * 100
+        let p = (s.distance - s.minDist) / (s.maxDist - s.minDist) * 100
+        return p < 0 ? 0 : p > 100 ? 100 : p
+      },
+      iconColor(s) {
+        return !s.percentage ? "gradient-blue" : s.percentage < 60 && "gradient-green" || s.percentage < 80 && "gradient-orange" || "gradient-red"
       }
     },
-    mounted() {
+    created() {
       this.initBigChart(0);
+      this.getAllDevices();
+      this.getAllDevicesLatestData();
 
       console.log(cosmos.getAllDevicesLatestData());
       console.log(cosmos.getAllDevices());
-      // this.allData();
     }
   };
 </script>
