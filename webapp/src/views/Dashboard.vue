@@ -1,23 +1,10 @@
 <template>
   <div>
 
-    <base-header class="pb-6 pb-8 pt-5 pt-md-8 bg-gradient-success">
+    <base-header class="pb-6 pb-8 pt-8 pt-md-6 bg-gradient-success">
       <!-- Card stats -->
-      <b-navbar-nav class="align-items-center ml-md-auto">
-        <b-form class="navbar-search form-inline mr-sm-3"
-                                       :class="{'navbar-search-dark': type === 'default', 'navbar-search-light': type === 'default'}"
-                                       id="navbar-search-main">
-          <b-form-group class="mb-0">
-            <b-input-group class="input-group-alternative input-group-merge">
-              <b-form-input placeholder="Search" type="text"> </b-form-input>
-
-              <div class="input-group-append">
-                <span class="input-group-text"><i class="fas fa-search"></i></span>
-              </div>
-            </b-input-group>
-          </b-form-group>
-        </b-form>
-      </b-navbar-nav>
+      <hr class="my-3">
+      <b-row>
 
 
       <!-- <div v-if="loading">Hej</div> -->
