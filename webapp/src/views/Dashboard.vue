@@ -381,6 +381,9 @@
     },
     mounted() {
       this.initBigChart(0);
+
+      console.log(cosmos.getAllDevicesLatestData());
+      console.log(cosmos.getAllDevices());
       // this.allData();
     }
   };
