@@ -27,7 +27,10 @@
           </stats-card>
         </b-col>
 
-        <!-- <div>{{smartbins}}</div> -->
+        <div>
+          <b-button @click="loadData">Click me</b-button>
+        </div>
+        <div>{{smartbins}}</div>
 
 
 
@@ -275,6 +278,28 @@
             fullness: 100
           }
         ],
+        mockData: [
+          {
+            "deviceId": "1",
+            "distance": 5,
+          },
+          {
+            "deviceId": "2",
+            "distance": 40,
+          },
+          {
+            "deviceId": "3",
+            "distance": 100,
+          },
+          {
+            "deviceId": "4",
+            "distance": 40,
+          },
+          {
+            "deviceId": "5",
+            "distance": 80,
+          }
+        ],
         mockBins: [
           {
             "deviceId": "1",
@@ -282,7 +307,6 @@
             "location": "Vardagsrum",
             "minDist": 10,
             "maxDist": 110,
-            "distance": 5,
             "timestamp": Date.now()
           },
           {
@@ -291,7 +315,6 @@
             "location": "Sovrum",
             "minDist": 20,
             "maxDist": 120,
-            "distance": 40,
             "timestamp": Date.now()
           },
           {
@@ -300,7 +323,6 @@
             "location": "Under kudden",
             "minDist": 10,
             "maxDist": 110,
-            "distance": 100,
             "timestamp": Date.now()
           },
           {
@@ -309,7 +331,6 @@
             "location": "Garaget",
             "minDist": 10,
             "maxDist": 110,
-            "distance": 40,
             "timestamp": Date.now()
           },
           {
@@ -318,7 +339,6 @@
             "location": "Köket",
             "minDist": 10,
             "maxDist": 110,
-            "distance": 80,
             "timestamp": Date.now()
           }
         ]
@@ -326,7 +346,11 @@
     },
     computed: {
       smartbins() {
-        return this.mockBins.map(s => {s.percentage = this.percentage(s); return s})
+        return this.mockBins.map(s => {
+          s.distance = this.mockData.find(obj => obj.deviceId === s.deviceId).distance;
+          s.percentage = this.percentage(s); 
+          return s
+        });
       }
     },
     methods: {
