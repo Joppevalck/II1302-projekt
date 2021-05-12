@@ -82,7 +82,7 @@
                 <!--Divider-->
                 <hr class="my-3">
                 <!--Heading-->
-                <h6 class="navbar-heading text-muted">Documentation</h6>
+                <!--<h6 class="navbar-heading text-muted">Documentation</h6>-->
                 <!--Navigation-->
                 <!--<ul class="navbar-nav mb-md-3">
                     <li class="nav-item">
@@ -119,7 +119,7 @@
     props: {
       logo: {
         type: String,
-        default: 'img/brand/green.png',
+        default: 'img/brand/smartbin.png',
         description: 'Sidebar app logo'
       },
       autoClose: {
