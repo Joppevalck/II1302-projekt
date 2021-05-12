@@ -20,7 +20,8 @@
       </b-navbar-nav>
 
 
-      <b-row>
+      <!-- <div v-if="loading">Hej</div> -->
+      <b-row> 
         <b-col v-for="s in smartbins" :key=s.deviceId xl="3" md="6">
           <stats-card :title="s.location"
                       :type="iconColor(s)"
@@ -50,9 +51,6 @@
           </stats-card>
         </b-col>
 
-        <div>
-          <b-button @click="getAllDevicesLatestData">Click me</b-button>
-        </div>
 
         <!-- <div>{{allMeasurementData}}</div> -->
 
@@ -127,12 +125,15 @@
           </stats-card>
         </b-col> -->
       </b-row>
+        <div>
+          <b-button @click="getAllDevicesLatestData">Refresh</b-button>
+        </div>
     </base-header>
 
     <!--Charts-->
     <b-container fluid class="mt--7">
       <b-row>
-        <b-col xl="8" class="mb-5 mb-xl-0">
+        <!-- <b-col xl="8" class="mb-5 mb-xl-0">
           <card type="default" header-classes="bg-transparent">
             <b-row align-v="center" slot="header">
               <b-col>
@@ -168,7 +169,7 @@
             >
             </line-chart>
           </card>
-        </b-col>
+        </b-col> -->
 
         <!-- <b-col xl="4" class="mb-5 mb-xl-0">
           <card header-classes="bg-transparent">
@@ -374,7 +375,8 @@
           }
         ],
         allMeasurementData: [],
-        allDevices: []
+        allDevices: [],
+        loading: true
       };
     },
     computed: {
@@ -410,7 +412,8 @@
         return fullness < 60 && "success" || fullness < 80 && "warning" || "danger"
       },
       getAllDevicesLatestData() {
-        cosmos.getAllDevicesLatestData().then(res => this.allMeasurementData = res)
+        this.loading = true;
+        cosmos.getAllDevicesLatestData().then(res => this.allMeasurementData = res).then(this.loading = false)
       },
       getAllDevices() {
         cosmos.getAllDevices().then(res => this.allDevices = res)
