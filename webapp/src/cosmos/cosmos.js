@@ -33,7 +33,7 @@ const cosmos = {
         return items;
     },
 
-    async getAllLatest() {
+    async getAllDevicesLatestData() {
         const dataQuery = {
             query: "SELECT c.deviceId, MAX(c._ts) AS timeStamp FROM c GROUP BY c.deviceId",
         }
@@ -41,20 +41,22 @@ const cosmos = {
         .query(dataQuery)
         .fetchAll();
 
-        const deviceQuery = {
-            query: "SELECT * FROM c"
-        }
-        const { resources: deviceData } = await deviceContainer.items
-        .query(deviceQuery)
-        .fetchAll();        
-        
-        
-
-
-        return items;
+        return data;
     },
 
-    async getLatest(deviceId){
+    async getAllDevices() {
+        const deviceQuery = {
+            query: "SELECT c.deviceId, MAX(c._ts) AS timeStamp FROM c GROUP BY c.deviceId"
+        }
+        const { resources: devices } = await deviceContainer.items
+        .query(deviceQuery)
+        .fetchAll();   
+        
+        return devices;
+    },
+
+    async getDeviceData(deviceId){
+        // TODO change to get historical data
         const query = {
             query: "SELECT * FROM c WHERE c.deviceId = @deviceId ORDER BY c._ts DESC OFFSET 0 LIMIT 1",
             parameters: [{name: "@deviceId", value: deviceId}]
