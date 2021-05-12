@@ -4,8 +4,6 @@
     <base-header class="pb-6 pb-8 pt-8 pt-md-6 bg-gradient-success">
       <!-- Card stats -->
       <hr class="my-3">
-      <b-row>
-
 
       <!-- <div v-if="loading">Hej</div> -->
       <b-row> 
