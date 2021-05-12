@@ -11,7 +11,14 @@
           }"
         >
         </sidebar-item>
-
+        <sidebar-item
+          :link="{
+            name: 'About us',
+            path: '/aboutus',
+            icon: 'ni ni-tv-2 text-primary',
+          }"
+        >
+        </sidebar-item>
         <!--<sidebar-item
             :link="{
               name: 'Icons',
