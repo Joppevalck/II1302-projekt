@@ -8,7 +8,7 @@
    <!-- Navbar links -->
   <b-navbar-nav class="align-items-center ml-md-auto">
     <!-- This item dont have <b-nav-item> because item have data-action/data-target on tag <a>, wich we cant add -->
-    <!--   <li class="nav-item d-sm-none">
+      <li class="nav-item d-sm-none">
          <a class="nav<link" href="#" data-action="search-show" data-target="#navbar-search-main">
            <i class="ni ni-zoom-split-in"></i>
          </a>
@@ -20,7 +20,7 @@
              id="navbar-search-main">
          <b-form-group class="mb-0">
            <b-input-group class="input-group-alternative input-group-merge">
-             <b-form-input placeholder="Search" type="text"> </b-form-input>
+             <b-form-input placeholder="Search bin by name" type="text"> </b-form-input>
 
              <div class="input-group-append">
                <span class="input-group-text"><i class="fas fa-search"></i></span>
@@ -28,7 +28,7 @@
            </b-input-group>
          </b-form-group>
        </b-form>
-       <base-dropdown menu-on-right
+       <!--<base-dropdown menu-on-right
                       class="nav-item"
                       tag="li"
                       title-tag="a"
@@ -120,3 +120,4 @@ export default {
   }
 };
 </script>
+
