@@ -18,6 +18,7 @@
           </b-form-group>
         </b-form>
       </b-navbar-nav>
+      <hr class="my-3">
       <b-row>
 
         <b-col v-for="card in cards" :key=card.title xl="3" md="6">
