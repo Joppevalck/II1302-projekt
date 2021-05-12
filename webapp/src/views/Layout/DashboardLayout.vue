@@ -15,7 +15,7 @@
           :link="{
             name: 'About us',
             path: '/aboutus',
-            icon: 'ni ni-tv-2 text-primary',
+            icon: 'ni ni-circle-08 text-primary',
           }"
         >
         </sidebar-item>
