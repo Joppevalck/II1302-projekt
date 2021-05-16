@@ -55,18 +55,29 @@ const cosmos = {
         return devices;
     },
 
-    async getDeviceData(deviceId){
-        // TODO change to get historical data
-        const query = {
-            query: "SELECT c.deviceId, c.name, c.location, c.minDist, c.maxDist, c._ts FROM c WHERE c.deviceId = @deviceId ORDER BY c._ts DESC OFFSET 0 LIMIT 1",
-            parameters: [{name: "@deviceId", value: deviceId}]
-        }
-        const { resources: items } = await dataContainer.items
-        .query(querySpec)
-        .fetchAll(); 
-        
-        return items;
+    async getDeviceHistoryData(deviceId) {
+            const querySpec = {
+                query: "SELECT * FROM c WHERE c.deviceId = @deviceId ORDER BY c._ts ",
+                parameters: [{name: "@deviceId", value: deviceId}]
+            }
+            const { resources: items } = await dataContainer.items
+            .query(querySpec)
+            .fetchAll(); 
+            
+            return items;
     }
+    // async getDevice(deviceId){
+    //     // TODO change to get historical data
+    //     const querySpec = {
+    //         query: "SELECT c.deviceId, c.name, c.location, c.minDist, c.maxDist, c._ts FROM c WHERE c.deviceId = @deviceId ORDER BY c._ts DESC OFFSET 0 LIMIT 1",
+    //         parameters: [{name: "@deviceId", value: deviceId}]
+    //     }
+    //     const { resources: items } = await dataContainer.items
+    //     .query(querySpec)
+    //     .fetchAll(); 
+        
+    //     return items;
+    // }
 }
 
 export default cosmos;

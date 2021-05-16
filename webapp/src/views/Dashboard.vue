@@ -37,7 +37,10 @@
         </b-col>
 
 
-        <!-- <div>{{allMeasurementData}}</div> -->
+        <div>{{allMeasurementData}}</div>
+        <div>{{selectedDeviceHistoryData}}</div>
+        <div>{{historyData}}</div>
+        <div>{{historyLabels}}</div>
 
 
 
@@ -110,20 +113,20 @@
           </stats-card>
         </b-col> -->
       </b-row>
-        <div>
+        <!-- <div>
           <b-button @click="getAllDevicesLatestData">Refresh</b-button>
-        </div>
+        </div> -->
     </base-header>
 
     <!--Charts-->
     <b-container fluid class="mt--7">
       <b-row>
-        <!-- <b-col xl="8" class="mb-5 mb-xl-0">
+        <b-col xl="8" class="mb-5 mb-xl-0">
           <card type="default" header-classes="bg-transparent">
             <b-row align-v="center" slot="header">
               <b-col>
                 <h6 class="text-light text-uppercase ls-1 mb-1">Overview</h6>
-                <h5 class="h3 text-white mb-0">Sales value</h5>
+                <h5 class="h3 text-white mb-0">History measurements</h5>
               </b-col>
               <b-col>
                 <b-nav class="nav-pills justify-content-end">
@@ -154,7 +157,7 @@
             >
             </line-chart>
           </card>
-        </b-col> -->
+        </b-col>
 
         <!-- <b-col xl="4" class="mb-5 mb-xl-0">
           <card header-classes="bg-transparent">
@@ -227,6 +230,7 @@
       return {
         bigLineChart: {
           allData: [
+            [0],
             // [0, 20, 10, 30, 15, 40, 20, 10],
             // [0, 20, 5, 25, 10, 30, 15, 40]
           ],
@@ -235,10 +239,11 @@
             datasets: [
               {
                 label: 'Performance',
-                data: [0, 20, 10, 30, 15, 40, 20, 60, 60, 100, 90, 20, 34, 67],
+                data: [0, 20, 10, 30, 15, 40, 20, 50, 60, , 90, 20, 34, 67, 0, 20, 10, 30, 15, 40, 20, 50, 60, 100, 90, 20, 34, 67,0, 20, 10, 30, 15, 40, 20, 50, 60, 100, 90, 20, 34, 67, 0, 20, 10, 30, 15, 40, 20, 50, 60, 100, 90, 20, 34, 67,],
+                spanGaps: false
               }
             ],
-            labels: ['Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec', 'wd', '2e2', '2edwdc', 'qwd'],
+            labels: ['Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec', 'wd', '2e2', '2edwdc', 'qwd', 'Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec', 'wd', '2e2', '2edwdc', 'qwd', 'Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec', 'wd', '2e2', '2edwdc', 'qwd', 'Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec', 'wd', '2e2', '2edwdc', 'qwd',],
           },
           extraOptions: chartConfigs.blueChartOptions,
         },
@@ -361,40 +366,51 @@
         ],
         allMeasurementData: [],
         allDevices: [],
-        loading: true
+        loading: true,
+        selectedDeviceHistoryData: []
       };
     },
     computed: {
       smartbins() {
         return this.allDevices.map(s => {
           let data = this.allMeasurementData.find(obj => obj.deviceId === s.deviceId);
-          // data = {"distance": 75};
           if (data) {
             s.distance = data.distance || null;
             s.timestamp = data.timestamp * 1000 || null;
-            console.log(s.timestamp)
             s.percentage = this.percentage(s); 
           }
           return s
         });
+      },
+      historyData() {
+        return this.selectedDeviceHistoryData.map(data => parseFloat(data.distance))
+      },
+      historyLabels() {
+        return this.selectedDeviceHistoryData.map(data => new Date(data._ts*1000).toLocaleString())
       }
     },
     methods: {
       initBigChart(index) {
-        // let chartData = {
-        //   datasets: [
-        //     {
-        //       label: 'Performance',
-        //       data: this.bigLineChart.allData[index]
-        //     }
-        //   ],
-        //   labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        // };
-        // this.bigLineChart.chartData = chartData;
-        // this.bigLineChart.activeIndex = index;
+        this.getAllDevicesLatestData();
+        this.getDeviceHistoryData("5");
+        let chartData = {
+          datasets: [
+            {
+              label: 'Performance',
+              data: this.historyData
+            }
+          ],
+          labels: this.historyLabels,
+          // labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        };
+        this.bigLineChart.chartData = chartData;
+        this.bigLineChart.activeIndex = index;
       },
       progressBarColor(fullness) {
         return fullness < 60 && "success" || fullness < 80 && "warning" || "danger"
+      },
+      getDeviceHistoryData(deviceId) {
+        cosmos.getDeviceHistoryData(deviceId).then(res => this.selectedDeviceHistoryData = res)
       },
       getAllDevicesLatestData() {
         this.loading = true;
@@ -412,12 +428,14 @@
       }
     },
     created() {
-      this.initBigChart(0);
       this.getAllDevices();
       this.getAllDevicesLatestData();
+      // this.getDeviceHistoryData("2");
+      // this.initBigChart(0);
+      
 
-      console.log(cosmos.getAllDevicesLatestData());
-      console.log(cosmos.getAllDevices());
+      // console.log(cosmos.getAllDevicesLatestData());
+      // console.log(cosmos.getAllDevices());
     }
   };
 </script>
