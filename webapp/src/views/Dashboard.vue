@@ -39,7 +39,6 @@
 
 
         <!-- <div>{{allMeasurementData}}</div> -->
-        <!-- <div>{{selectedDeviceHistoryData}}</div> -->
         <!-- <div>{{historyData}}</div>
         <div>{{historyLabels}}</div> -->
 
@@ -368,7 +367,6 @@
         allMeasurementData: [],
         allDevices: [],
         loading: true,
-        selectedDeviceHistoryData: [],
         selectedDevice: null
       };
     },
@@ -383,13 +381,7 @@
           }
           return s
         });
-      },
-      // historyData() {
-      //   return this.selectedDeviceHistoryData.map(data => parseFloat(data.distance))
-      // },
-      // historyLabels() {
-      //   return this.selectedDeviceHistoryData.map(data => new Date(data._ts*1000).toLocaleString())
-      // }
+      }
     },
     methods: {
       initBigChart(deviceId) {
@@ -415,7 +407,7 @@
         return fullness < 60 && "success" || fullness < 80 && "warning" || "danger"
       },
       getDeviceHistoryData(deviceId) {
-        return cosmos.getDeviceHistoryData(deviceId).then(res => this.selectedDeviceHistoryData = res)
+        return cosmos.getDeviceHistoryData(deviceId)
       },
       getAllDevicesLatestData() {
         this.loading = true;
