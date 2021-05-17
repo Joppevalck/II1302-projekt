@@ -2,17 +2,18 @@
   <div>
 
     <base-header class="pb-6 pb-8 pt-8 pt-md-6 bg-gradient-success">
-      <!-- Card stats -->
       <hr class="my-3">
 
-      <!-- <div v-if="loading">Hej</div> -->
+      <p>Click on a card to see historical data at the bottom of the page!</p>
+      <!-- Card stats -->
       <b-row> 
-        <b-col v-for="s in smartbins" :key=s.deviceId xl="3" md="6">
+        <b-col v-for="s in smartbins" @click="cardClicked(s.deviceId)" :key=s.deviceId xl="3" md="6">
           <stats-card :title="s.location"
                       :type="iconColor(s)"
                       :sub-title="s.name"
                       icon="ni ni-chart-bar-32"
-                      class="mb-4">
+                      class="mb-4"
+                      v-bind:class="{selected: s.deviceId === selectedDevice}">
 
             <template slot="footer">
               <BaseProgress v-if="s.percentage"
@@ -37,10 +38,10 @@
         </b-col>
 
 
-        <div>{{allMeasurementData}}</div>
-        <div>{{selectedDeviceHistoryData}}</div>
-        <div>{{historyData}}</div>
-        <div>{{historyLabels}}</div>
+        <!-- <div>{{allMeasurementData}}</div> -->
+        <!-- <div>{{selectedDeviceHistoryData}}</div> -->
+        <!-- <div>{{historyData}}</div>
+        <div>{{historyLabels}}</div> -->
 
 
 
@@ -119,17 +120,17 @@
     </base-header>
 
     <!--Charts-->
-    <b-container fluid class="mt--7">
+    <b-container v-if="selectedDevice" fluid class="mt--7">
       <b-row>
         <b-col xl="8" class="mb-5 mb-xl-0">
           <card type="default" header-classes="bg-transparent">
             <b-row align-v="center" slot="header">
               <b-col>
-                <h6 class="text-light text-uppercase ls-1 mb-1">Overview</h6>
-                <h5 class="h3 text-white mb-0">History measurements</h5>
+                <h6 class="text-light text-uppercase ls-1 mb-1">{{allDevices.find(s => s.deviceId == selectedDevice).name}}</h6>
+                <h5 class="h3 text-white mb-0">Historical measurements</h5>
               </b-col>
               <b-col>
-                <b-nav class="nav-pills justify-content-end">
+                <!-- <b-nav class="nav-pills justify-content-end">
                   <b-nav-item
                        class="mr-2 mr-md-0"
                        :active="bigLineChart.activeIndex === 0"
@@ -146,11 +147,11 @@
                     <span class="d-none d-md-block">Week</span>
                     <span class="d-md-none">W</span>
                   </b-nav-item>
-                </b-nav>
+                </b-nav> -->
               </b-col>
             </b-row>
             <line-chart
-              :height="350"
+              :height="550"
               ref="bigChart"
               :chart-data="bigLineChart.chartData"
               :extra-options="bigLineChart.extraOptions"
@@ -239,11 +240,11 @@
             datasets: [
               {
                 label: 'Performance',
-                data: [0, 20, 10, 30, 15, 40, 20, 50, 60, , 90, 20, 34, 67, 0, 20, 10, 30, 15, 40, 20, 50, 60, 100, 90, 20, 34, 67,0, 20, 10, 30, 15, 40, 20, 50, 60, 100, 90, 20, 34, 67, 0, 20, 10, 30, 15, 40, 20, 50, 60, 100, 90, 20, 34, 67,],
-                spanGaps: false
+                // data: [0, 20, 10, 30, 15, 40, 20, 50, 60, null, 90, 20, 34, 67, 0, 20, 10, 30, 15, 40, 20, 50, 60, 100, 90, 20, 34, 67,0, 20, 10, 30, 15, 40, 20, 50, 60, 100, 90, 20, 34, 67, 0, 20, 10, 30, 15, 40, 20, 50, 60, 100, 90, 20, 34, 67,],
+                spanGaps: true
               }
             ],
-            labels: ['Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec', 'wd', '2e2', '2edwdc', 'qwd', 'Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec', 'wd', '2e2', '2edwdc', 'qwd', 'Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec', 'wd', '2e2', '2edwdc', 'qwd', 'Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec', 'wd', '2e2', '2edwdc', 'qwd',],
+            // labels: ['Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec', 'wd', '2e2', '2edwdc', 'qwd', 'Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec', 'wd', '2e2', '2edwdc', 'qwd', 'Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec', 'wd', '2e2', '2edwdc', 'qwd', 'Bay', 'Jun', 'Jul', 'Aug', 'Pep', 'Oct', 'Nov', 'Dec', 'wd', '2e2', '2edwdc', 'qwd',],
           },
           extraOptions: chartConfigs.blueChartOptions,
         },
@@ -367,7 +368,8 @@
         allMeasurementData: [],
         allDevices: [],
         loading: true,
-        selectedDeviceHistoryData: []
+        selectedDeviceHistoryData: [],
+        selectedDevice: null
       };
     },
     computed: {
@@ -382,35 +384,38 @@
           return s
         });
       },
-      historyData() {
-        return this.selectedDeviceHistoryData.map(data => parseFloat(data.distance))
-      },
-      historyLabels() {
-        return this.selectedDeviceHistoryData.map(data => new Date(data._ts*1000).toLocaleString())
-      }
+      // historyData() {
+      //   return this.selectedDeviceHistoryData.map(data => parseFloat(data.distance))
+      // },
+      // historyLabels() {
+      //   return this.selectedDeviceHistoryData.map(data => new Date(data._ts*1000).toLocaleString())
+      // }
     },
     methods: {
-      initBigChart(index) {
-        this.getAllDevicesLatestData();
-        this.getDeviceHistoryData("5");
-        let chartData = {
-          datasets: [
-            {
-              label: 'Performance',
-              data: this.historyData
-            }
-          ],
-          labels: this.historyLabels,
-          // labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        };
-        this.bigLineChart.chartData = chartData;
-        this.bigLineChart.activeIndex = index;
+      initBigChart(deviceId) {
+        this.getDeviceHistoryData(deviceId.toString())
+        .then(data => this.getChartAxes(data))
+        .then(({measurementData, labels}) => {
+          let chartData = {
+            datasets: [
+              {
+                label: 'Performance',
+                data: measurementData,
+                spanGaps: true
+              }
+            ],
+            labels: labels
+            // labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          };
+          this.bigLineChart.chartData = chartData;
+          // this.bigLineChart.activeIndex = index;
+        });
       },
       progressBarColor(fullness) {
         return fullness < 60 && "success" || fullness < 80 && "warning" || "danger"
       },
       getDeviceHistoryData(deviceId) {
-        cosmos.getDeviceHistoryData(deviceId).then(res => this.selectedDeviceHistoryData = res)
+        return cosmos.getDeviceHistoryData(deviceId).then(res => this.selectedDeviceHistoryData = res)
       },
       getAllDevicesLatestData() {
         this.loading = true;
@@ -425,13 +430,61 @@
       },
       iconColor(s) {
         return !s.percentage ? "gradient-blue" : s.percentage < 60 && "gradient-green" || s.percentage < 80 && "gradient-orange" || "gradient-red"
+      },
+      getChartAxes(data) {
+        let a = data;
+
+        let least = Number.POSITIVE_INFINITY;
+        let last = Number.POSITIVE_INFINITY;
+
+        let current;
+        let difference;
+
+        for(let i = 0; i < a.length; ++i) {
+            current = parseInt(a[i]._ts);
+            difference = Math.abs(current - last);
+            if (difference < least)
+                least = difference;
+            last = current;
+        }
+
+        let interval = least;
+
+        let res = [];
+        let labels = [];
+        let index = 0;
+        for(let i = a[0]._ts; i < a[a.length -1]._ts; i += interval) {
+          // data array
+            if(a[index]._ts - i < interval)
+                res.push(parseInt(a[index++].distance));
+            else
+                res.push(null);
+          
+          // labels array
+            if(((i - a[0]._ts) / interval) % 5 === 0)
+                labels.push(new Date(i * 1000).toLocaleString());
+            else
+                labels.push("");
+        }
+
+        let result = {
+            measurementData: res,
+            labels: labels
+        };
+        return result;
+      },
+      cardClicked(deviceId) {
+        if (this.selectedDevice == deviceId)
+          this.selectedDevice = null;
+        else {
+          this.selectedDevice = deviceId;
+          this.initBigChart(deviceId);
+        }
       }
     },
     created() {
       this.getAllDevices();
       this.getAllDevicesLatestData();
-      // this.getDeviceHistoryData("2");
-      // this.initBigChart(0);
       
 
       // console.log(cosmos.getAllDevicesLatestData());
@@ -443,5 +496,8 @@
 .el-table .cell{
   padding-left: 0px;
   padding-right: 0px;
+}
+.selected {
+  box-shadow: 0 0 3pt 2pt rgb(35, 77, 33);
 }
 </style>
