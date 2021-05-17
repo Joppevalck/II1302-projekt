@@ -11,7 +11,7 @@
           <b-nav-item>
             PangPangBois
           </b-nav-item>
-          <b-nav-item>
+          <b-nav-item to="/aboutus">
            About Us
           </b-nav-item>
         </b-nav>

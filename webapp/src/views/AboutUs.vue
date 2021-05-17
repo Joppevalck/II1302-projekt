@@ -7,7 +7,8 @@
           <b-row class="justify-content-center">
             <b-col xl="5" lg="6" md="6" class="px-5">
               <h1 class="text-light">Welcome to us!</h1>
-              <p class="text-lead text-white">Work hard and play every day!</p>
+              <p class="text-lead text-white">This is a project by KTH students in project and project methods. It is a
+              prototype system for checking bins if they are full and should be emptied.</p>
 
               <router-link to="/dashboard" class="font-weight-bold text-white mt-5">Back to dashboard</router-link>
             </b-col>
