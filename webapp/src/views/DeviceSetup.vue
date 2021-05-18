@@ -37,6 +37,7 @@
               <p></p>
             </div>
           <b-button type="submit">Submit</b-button>
+          <b-button type="reset">Reset</b-button>
         </b-form>
       </div>
       <div class="separator separator-bottom separator-skew zindex-100">
@@ -72,15 +73,11 @@ export default {
     onReset(event) {
       event.preventDefault()
       // Reset our form values
-      this.form.email = ''
-      this.form.name = ''
-      this.form.food = null
-      this.form.checked = []
-      // Trick to reset/clear native browser form validation state
-      this.show = false
-      this.$nextTick(() => {
-        this.show = true
-      })
+      this.form.deviceId = '';
+      this.form.name = '';
+      this.form.location = '';
+      this.form.maxDist = '';
+      this.form.minDist = '';
     }
   }
 }
