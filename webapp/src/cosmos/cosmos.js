@@ -20,7 +20,9 @@ const dataContainer = database.container(containerId.data);
 
 const cosmos = {
     async createDevice(device){
-
+      const { resource: createdItem } = await deviceContainer.items.create(device);
+      console.log(`\r\nCreated new item: ${createdItem}\r\n`);
+      return createdItem;
     },
     async getAllData() {
         // query to return all items

@@ -15,27 +15,29 @@
 
 
       <div align="center">
+        <b-form @submit="onSubmit" @reset="onReset">
           <div class="col-md-6">
-              <b-form-input v-model="deviceId" placeholder="Device Id"></b-form-input>
+              <b-form-input v-model="form.deviceId" placeholder="Device Id" required></b-form-input>
             <p></p>
           </div>
           <div class="col-md-6">
-            <b-form-input v-model="name" placeholder="Name"></b-form-input>
+            <b-form-input v-model="form.name" placeholder="Name" required></b-form-input>
             <p></p>
           </div>
             <div class="col-md-6">
-                <b-form-input v-model="location" placeholder="Location"></b-form-input>
+                <b-form-input v-model="form.location" placeholder="Location" required></b-form-input>
               <p></p>
             </div>
             <div class="col-md-6">
-              <b-form-input v-model="maxDist" placeholder="Maximum Distance"></b-form-input>
+              <b-form-input v-model="form.maxDist" placeholder="Maximum Distance" required></b-form-input>
               <p></p>
             </div>
             <div class="col-md-6">
-                <b-form-input v-model="minDist" placeholder="Minimum Distance" ></b-form-input>
+                <b-form-input v-model="form.minDist" placeholder="Minimum Distance" required></b-form-input>
               <p></p>
             </div>
-        <b-button type="submit">Submit</b-button>
+          <b-button type="submit">Submit</b-button>
+        </b-form>
       </div>
       <div class="separator separator-bottom separator-skew zindex-100">
         <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -47,15 +49,38 @@
 </template>
 
 <script>
+import cosmos from "../cosmos/cosmos";
 export default {
-  name: "Device Setup",
-  data(){
+  name: "DeviceSetup",
+  data() {
     return {
-      deviceId: "",
-      name: "",
-      location: "",
-      minDist: "",
-      maxDist: ""
+      form: {
+        deviceId: '',
+        name: '',
+        location: "",
+        maxDist:"",
+        minDist:""
+      }
+    }
+  },
+  methods: {
+    onSubmit(event) {
+      event.preventDefault()
+      cosmos.createDevice(this.form)
+      alert(JSON.stringify(this.form))
+    },
+    onReset(event) {
+      event.preventDefault()
+      // Reset our form values
+      this.form.email = ''
+      this.form.name = ''
+      this.form.food = null
+      this.form.checked = []
+      // Trick to reset/clear native browser form validation state
+      this.show = false
+      this.$nextTick(() => {
+        this.show = true
+      })
     }
   }
 }
