@@ -415,9 +415,6 @@
       this.initBigChart(0);
       this.getAllDevices();
       this.getAllDevicesLatestData();
-
-      console.log(cosmos.getAllDevicesLatestData());
-      console.log(cosmos.getAllDevices());
     }
   };
 </script>
