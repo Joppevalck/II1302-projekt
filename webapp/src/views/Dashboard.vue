@@ -238,7 +238,7 @@
           chartData: {
             datasets: [
               {
-                label: 'Performance',
+                label: 'Percentage',
                 // data: [0, 20, 10, 30, 15, 40, 20, 50, 60, null, 90, 20, 34, 67, 0, 20, 10, 30, 15, 40, 20, 50, 60, 100, 90, 20, 34, 67,0, 20, 10, 30, 15, 40, 20, 50, 60, 100, 90, 20, 34, 67, 0, 20, 10, 30, 15, 40, 20, 50, 60, 100, 90, 20, 34, 67,],
                 spanGaps: true
               }
@@ -391,7 +391,7 @@
           let chartData = {
             datasets: [
               {
-                label: 'Performance',
+                label: 'Percentage',
                 data: measurementData,
                 spanGaps: true
               }
@@ -424,6 +424,7 @@
         return !s.percentage ? "gradient-blue" : s.percentage < 60 && "gradient-green" || s.percentage < 80 && "gradient-orange" || "gradient-red"
       },
       getChartAxes(data) {
+        /* Create the axes for the charts */
         let a = data;
 
         let least = Number.POSITIVE_INFINITY;
@@ -432,6 +433,7 @@
         let current;
         let difference;
 
+        // find the shortest time interval between the data
         for(let i = 0; i < a.length; ++i) {
             current = parseInt(a[i]._ts);
             difference = Math.abs(current - last);
@@ -442,31 +444,41 @@
 
         let interval = least;
 
+        let {minDist, maxDist} = this.allDevices.find(s => s.deviceId == data[0].deviceId);
+        console.log({minDist, maxDist});
+
+        // create the axes by going through each time interval and placing the data where it belongs
         let res = [];
         let labels = [];
         let index = 0;
         for(let i = a[0]._ts; i < a[a.length -1]._ts; i += interval) {
           // data array
             if(a[index]._ts - i < interval)
-                res.push(parseInt(a[index++].distance));
+                res.push(
+                    this.percentage({
+                      minDist, 
+                      maxDist,
+                      distance: parseInt(a[index++].distance)
+                    }).toFixed(2)
+                );
             else
                 res.push(null);
           
           // labels array
-            if(((i - a[0]._ts) / interval) % 5 === 0)
+            if( ( (i - a[0]._ts) / interval) % 5 === 0)
                 labels.push(new Date(i * 1000).toLocaleString());
             else
-                labels.push("");
+                labels.push(new Date(i * 1000).toLocaleTimeString());
         }
 
-        let result = {
+        
+        return {
             measurementData: res,
             labels: labels
         };
-        return result;
       },
       cardClicked(deviceId) {
-        if (this.selectedDevice == deviceId)
+        if (this.selectedDevice === deviceId)
           this.selectedDevice = null;
         else {
           this.selectedDevice = deviceId;
