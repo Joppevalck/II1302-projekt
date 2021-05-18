@@ -39,7 +39,7 @@ const routes = [
       },
       {
         path: '/aboutus',
-        name: 'aboutus',
+        name: 'about us',
         component: () => import('../views/AboutUs')
       },
       {
