@@ -386,9 +386,6 @@
       }
     },
     methods: {
-      increment() {
-        this.$store.dispatch("increment");
-      },
       initBigChart(index) {
         // let chartData = {
         //   datasets: [
