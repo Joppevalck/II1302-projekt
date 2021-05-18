@@ -25,14 +25,12 @@ const cosmos = {
         .query(distinctDevicesQuery)
         .fetchAll();
 
-
-
-        let latestData = deviceIds.map(this.getLatestData)
+        let latestData = deviceIds.map(this.getLatestData);
 
         await Promise.all(latestData).then(res => {
-            latestData = res
-        })
-        
+            latestData = res.filter(x => x)
+        });
+
         return latestData;
     },
 
@@ -62,6 +60,7 @@ const cosmos = {
         const { resources: devices } = await deviceContainer.items
         .query(deviceQuery)
         .fetchAll();   
+
         
         return devices;
     },

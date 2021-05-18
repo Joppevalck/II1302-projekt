@@ -7,7 +7,7 @@
       <p>Click on a card to see historical data at the bottom of the page!</p>
       <!-- Card stats -->
       <b-row> 
-        <b-col v-for="s in smartbins" @click="cardClicked(s.deviceId)" :key=s.deviceId xl="3" md="6">
+        <b-col v-for="s in smartbins" @click="s.distance && cardClicked(s.deviceId)" :key=s.deviceId xl="3" md="6">
           <stats-card :title="s.location"
                       :type="iconColor(s)"
                       :sub-title="s.name"
@@ -309,7 +309,7 @@
       },
       getAllDevicesLatestData() {
         this.loading = true;
-        cosmos.getAllDevicesLatestData().then(res => this.allMeasurementData = res).then(this.loading = false)
+        return cosmos.getAllDevicesLatestData().then(res => this.allMeasurementData = res).then(this.loading = false)
       },
       getAllDevices() {
         cosmos.getAllDevices().then(res => this.allDevices = res)
