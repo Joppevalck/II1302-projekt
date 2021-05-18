@@ -19,12 +19,15 @@ const deviceContainer = database.container(containerId.device);
 const dataContainer = database.container(containerId.data);
 
 const cosmos = {
+    async createDevice(device){
+
+    },
     async getAllData() {
         // query to return all items
         const querySpec = {
             query: "SELECT * from c"
         };
-        
+
         // read all items in the Items container
         const { resources: items } = await dataContainer.items
         .query(querySpec)
@@ -50,8 +53,8 @@ const cosmos = {
         }
         const { resources: devices } = await deviceContainer.items
         .query(deviceQuery)
-        .fetchAll();   
-        
+        .fetchAll();
+
         return devices;
     },
 
@@ -63,8 +66,8 @@ const cosmos = {
         }
         const { resources: items } = await dataContainer.items
         .query(querySpec)
-        .fetchAll(); 
-        
+        .fetchAll();
+
         return items;
     }
 }
