@@ -38,6 +38,7 @@
 
 
         <!-- <div>{{allMeasurementData}}</div> -->
+        <!-- <div>{{searchQuery}}</div> -->
 
 
 
@@ -366,20 +367,28 @@
     },
     computed: {
       smartbins() {
-        return this.allDevices.map(s => {
+        let search = this.searchQuery.toLowerCase();
+        return this.allDevices
+                    .filter(s => s.name.toLowerCase().includes(search) || s.location.toLowerCase().includes(search))
+                    .map(s => {
           let data = this.allMeasurementData.find(obj => obj.deviceId === s.deviceId);
           // data = {"distance": 75};
           if (data) {
             s.distance = data.distance || null;
             s.timestamp = data.timestamp * 1000 || null;
-            console.log(s.timestamp)
             s.percentage = this.percentage(s); 
           }
           return s
         });
+      },
+      searchQuery() {
+        return this.$store.getters.getSearchQuery;
       }
     },
     methods: {
+      increment() {
+        this.$store.dispatch("increment");
+      },
       initBigChart(index) {
         // let chartData = {
         //   datasets: [
@@ -415,9 +424,6 @@
       this.initBigChart(0);
       this.getAllDevices();
       this.getAllDevicesLatestData();
-
-      console.log(cosmos.getAllDevicesLatestData());
-      console.log(cosmos.getAllDevices());
     }
   };
 </script>
