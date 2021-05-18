@@ -39,8 +39,7 @@
 
 
         <!-- <div>{{allMeasurementData}}</div> -->
-        <!-- <div>{{historyData}}</div>
-        <div>{{historyLabels}}</div> -->
+        <!-- <div>{{searchQuery}}</div> -->
 
 
 
@@ -265,7 +264,10 @@
     },
     computed: {
       smartbins() {
-        return this.allDevices.map(s => {
+        let search = this.searchQuery.toLowerCase();
+        return this.allDevices
+                    .filter(s => s.name.toLowerCase().includes(search) || s.location.toLowerCase().includes(search))
+                    .map(s => {
           let data = this.allMeasurementData.find(obj => obj.deviceId === s.deviceId);
           if (data) {
             s.distance = data.distance || null;
@@ -274,6 +276,9 @@
           }
           return s
         });
+      },
+      searchQuery() {
+        return this.$store.getters.getSearchQuery;
       }
     },
     methods: {
