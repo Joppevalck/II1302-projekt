@@ -19,20 +19,6 @@ const deviceContainer = database.container(containerId.device);
 const dataContainer = database.container(containerId.data);
 
 const cosmos = {
-    async getAllData() {
-        // query to return all items
-        const querySpec = {
-            query: "SELECT * from c"
-        };
-        
-        // read all items in the Items container
-        const { resources: items } = await dataContainer.items
-        .query(querySpec)
-        .fetchAll();
-
-        return items;
-    },
-
     async getAllDevicesLatestData() {
         const dataQuery = {
             query: "SELECT c.deviceId, c.distance, MAX(c._ts) AS timestamp FROM c GROUP BY c.deviceId, c.distance",
@@ -56,28 +42,16 @@ const cosmos = {
     },
 
     async getDeviceHistoryData(deviceId) {
-            const querySpec = {
-                query: "SELECT * FROM c WHERE c.deviceId = @deviceId ORDER BY c._ts ",
-                parameters: [{name: "@deviceId", value: deviceId}]
-            }
-            const { resources: items } = await dataContainer.items
-            .query(querySpec)
-            .fetchAll(); 
-            
-            return items;
-    }
-    // async getDevice(deviceId){
-    //     // TODO change to get historical data
-    //     const querySpec = {
-    //         query: "SELECT c.deviceId, c.name, c.location, c.minDist, c.maxDist, c._ts FROM c WHERE c.deviceId = @deviceId ORDER BY c._ts DESC OFFSET 0 LIMIT 1",
-    //         parameters: [{name: "@deviceId", value: deviceId}]
-    //     }
-    //     const { resources: items } = await dataContainer.items
-    //     .query(querySpec)
-    //     .fetchAll(); 
+        const querySpec = {
+            query: "SELECT * FROM c WHERE c.deviceId = @deviceId ORDER BY c._ts ",
+            parameters: [{name: "@deviceId", value: deviceId}]
+        }
+        const { resources: items } = await dataContainer.items
+        .query(querySpec)
+        .fetchAll(); 
         
-    //     return items;
-    // }
+        return items;
+    }
 }
 
 export default cosmos;
