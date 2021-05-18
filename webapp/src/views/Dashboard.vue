@@ -338,7 +338,6 @@
         let interval = least;
 
         let {minDist, maxDist} = this.allDevices.find(s => s.deviceId == data[0].deviceId);
-        console.log({minDist, maxDist});
 
         // create the axes by going through each time interval and placing the data where it belongs
         let res = [];
@@ -382,10 +381,6 @@
     created() {
       this.getAllDevices();
       this.getAllDevicesLatestData();
-      
-
-      // console.log(cosmos.getAllDevicesLatestData());
-      // console.log(cosmos.getAllDevices());
     }
   };
 </script>
