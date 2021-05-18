@@ -12,20 +12,6 @@ const deviceContainer = database.container(containerId.device);
 const dataContainer = database.container(containerId.data);
 
 const cosmos = {
-    async getAllData() {
-        // query to return all items
-        const querySpec = {
-            query: "SELECT * from c"
-        };
-        
-        // read all items in the Items container
-        const { resources: items } = await dataContainer.items
-        .query(querySpec)
-        .fetchAll();
-
-        return items;
-    },
-
     async getAllDevicesLatestData() {
         const distinctDevicesQuery = {
             query: `
@@ -80,10 +66,9 @@ const cosmos = {
         return devices;
     },
 
-    async getDeviceData(deviceId){
-        // TODO change to get historical data
-        const query = {
-            query: "SELECT Value root FROM (SELECT c.deviceId, c.name, c.location, c.minDist, c.maxDist, c._ts FROM c WHERE c.deviceId = @deviceId ORDER BY c._ts DESC OFFSET 0 LIMIT 1) as root",
+    async getDeviceHistoryData(deviceId) {
+        const querySpec = {
+            query: "SELECT * FROM c WHERE c.deviceId = @deviceId ORDER BY c._ts ",
             parameters: [{name: "@deviceId", value: deviceId}]
         }
         const { resources: items } = await dataContainer.items

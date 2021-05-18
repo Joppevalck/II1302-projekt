@@ -20,7 +20,7 @@
              id="navbar-search-main">
          <b-form-group class="mb-0">
            <b-input-group class="input-group-alternative input-group-merge">
-             <b-form-input placeholder="Search bin by name" type="text"> </b-form-input>
+             <b-form-input @input="searchChange($event)" placeholder="Search bin by name" type="text"> </b-form-input>
 
              <div class="input-group-append">
                <span class="input-group-text"><i class="fas fa-search"></i></span>
@@ -116,6 +116,9 @@ export default {
     },
     closeDropDown() {
       this.activeNotifications = false;
+    },
+    searchChange(event) {
+      this.$store.dispatch("setSearchQuery", event)
     }
   }
 };
