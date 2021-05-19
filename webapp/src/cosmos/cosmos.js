@@ -55,7 +55,7 @@ const cosmos = {
 
     async getAllDevices() {
         const deviceQuery = {
-            query: "SELECT Value root FROM (SELECT c.deviceId, c.name, c.location, c.minDist, c.maxDist, MAX(c._ts) AS timestamp FROM c GROUP BY c.deviceId, c.name, c.location, c.minDist, c.maxDist) as root"
+            query: "SELECT Value root FROM (SELECT c.id, c.deviceId, c.name, c.location, c.minDist, c.maxDist, MAX(c._ts) AS timestamp FROM c GROUP BY c.id, c.deviceId, c.name, c.location, c.minDist, c.maxDist) as root"
         }
         const { resources: devices } = await deviceContainer.items
         .query(deviceQuery)
