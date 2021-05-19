@@ -16,7 +16,7 @@
                       v-bind:class="{selected: s.deviceId === selectedDevice}">
 
             <template slot="footer">
-              <BaseProgress v-if="s.percentage"
+              <BaseProgress v-if="s.distance"
                             :value="s.percentage" 
                             label="Full"
                             :showLabel="! s.percentage > 80"
@@ -25,7 +25,7 @@
                             :height="5"
                             :type="progressBarColor(s.percentage)"
                             />
-              <template v-if="s.percentage">
+              <template v-if="s.distance">
                 <span class="text-success mr-2">{{s.percentage.toFixed(1)}}%</span>
                 <span class="text-nowrap">At {{new Date(s.timestamp).toUTCString()}}</span>
               </template>
@@ -319,7 +319,7 @@
         return p < 0 ? 0 : p > 100 ? 100 : p
       },
       iconColor(s) {
-        return !s.percentage ? "gradient-blue" : s.percentage < 60 && "gradient-green" || s.percentage < 80 && "gradient-orange" || "gradient-red"
+        return !s.distance ? "gradient-blue" : s.percentage < 60 && "gradient-green" || s.percentage < 80 && "gradient-orange" || "gradient-red"
       },
       getChartAxes(data) {
         /* Create the axes for the charts */
