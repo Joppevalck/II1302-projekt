@@ -13,14 +13,13 @@
 
       <!-- Card stats -->
       <b-row> 
-        <b-col v-for="s in smartbins" @click="s.distance && cardClicked(s.deviceId)" :key=s.deviceId xl="3" md="6">
+        <b-col v-for="s in smartbins" @click="s.distance && cardClicked(s.deviceId)" @mouseover="hoverDevice = s.deviceId" @mouseleave="hoverDevice = null":key=s.deviceId xl="3" md="6">
           <stats-card :title="s.location"
                       :type="iconColor(s)"
                       :sub-title="s.name"
                       icon="ni ni-chart-bar-32"
                       class="mb-4"
                       v-bind:class="{selected: s.deviceId === selectedDevice}">
-
             <template slot="footer">
               <BaseProgress v-if="s.distance"
                             :value="s.percentage" 
@@ -39,6 +38,9 @@
                 <span class="text-nowrap text-info mr-2">No data to display</span>
               </template>
 
+              <button v-if="s.deviceId === hoverDevice" @click="deleteDevice(s)" title="Delete Smartbin" type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </template>
           </stats-card>
         </b-col>
@@ -265,7 +267,8 @@
         allMeasurementData: [],
         allDevices: [],
         loading: true,
-        selectedDevice: null
+        selectedDevice: null,
+        hoverDevice: null
       };
     },
     computed: {
@@ -389,6 +392,12 @@
         else {
           this.selectedDevice = deviceId;
           this.initBigChart(deviceId);
+        }
+      },
+      deleteDevice(device) {
+        if (confirm('Are you sure you want to delete device: ' + device.name + '?')) {
+          cosmos.deleteDevice(device)
+          .then(this.getAllDevices());
         }
       }
     },

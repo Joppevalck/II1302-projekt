@@ -12,6 +12,12 @@ const deviceContainer = database.container(containerId.device);
 const dataContainer = database.container(containerId.data);
 
 const cosmos = {
+    async deleteDevice(device) {
+        console.log("deleting device");
+        const { resource: result } = await deviceContainer.item(device.id).delete();
+        console.log(`Deleted item with id: ${device.id}`);
+    },
+
     async createDevice(device) {
         const querySpec = {
             query: "SELECT * FROM c WHERE c.deviceId = @deviceId",
