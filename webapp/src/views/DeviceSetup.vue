@@ -68,7 +68,7 @@ export default {
     onSubmit(event) {
       event.preventDefault()
       cosmos.createDevice(this.form)
-      alert(JSON.stringify(this.form))
+      alert("Your device setup was successful!")
     },
     onReset(event) {
       event.preventDefault()
