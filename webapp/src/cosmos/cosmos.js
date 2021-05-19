@@ -19,6 +19,10 @@ const deviceContainer = database.container(containerId.device);
 const dataContainer = database.container(containerId.data);
 
 const cosmos = {
+    async deleteDevice(device) {
+
+    },
+    
     async getAllDevicesLatestData() {
         const dataQuery = {
             query: "SELECT c.deviceId, c.distance, MAX(c._ts) AS timestamp FROM c GROUP BY c.deviceId, c.distance",

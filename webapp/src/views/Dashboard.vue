@@ -14,7 +14,6 @@
                       icon="ni ni-chart-bar-32"
                       class="mb-4"
                       v-bind:class="{selected: s.deviceId === selectedDevice}">
-
             <template slot="footer">
               <BaseProgress v-if="s.percentage"
                             :value="s.percentage" 
@@ -33,6 +32,9 @@
                 <span class="text-nowrap text-info mr-2">No data to display</span>
               </template>
 
+              <button @click="deleteDevice(s)" title="Delete Smartbin" type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </template>
           </stats-card>
         </b-col>
@@ -381,6 +383,9 @@
           this.selectedDevice = deviceId;
           this.initBigChart(deviceId);
         }
+      },
+      deleteDevice(device) {
+        cosmos.deleteDevice(device);
       }
     },
     created() {
