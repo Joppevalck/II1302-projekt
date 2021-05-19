@@ -19,6 +19,14 @@
           }"
         >
         </sidebar-item>
+        <sidebar-item
+          :link="{
+            name: 'Device Setup',
+            path: '/deviceSetup',
+            icon: 'ni ni-pin-3 text-orange',
+          }"
+        >
+        </sidebar-item>
         <!--<sidebar-item
             :link="{
               name: 'Icons',

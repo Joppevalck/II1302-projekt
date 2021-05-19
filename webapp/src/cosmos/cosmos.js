@@ -1,13 +1,6 @@
 const CosmosClient = require("@azure/cosmos").CosmosClient;
 const config = require("./config");
 
-const newItem = {
-    id: "3",
-    category: "fun",
-    name: "Cosmos DB",
-    description: "Complete Cosmos DB Node.js Quickstart ⚡",
-    isComplete: false
-};
 
 const { endpoint, key, databaseId, containerId } = config;
 
@@ -23,25 +16,82 @@ const cosmos = {
 
     },
     
+    async createDevice(device) {
+        const querySpec = {
+            query: "SELECT * FROM c WHERE c.deviceId = @deviceId",
+            parameters: [{name: "@deviceId", value: device.deviceId}]
+        };
+
+        const { resources: items } = await deviceContainer.items
+        .query(querySpec)
+        .fetchAll();
+
+        console.log(items);
+
+        if (items.length === 0) {
+            const { resource: createdItem } = await deviceContainer.items.create(device);
+    
+            console.log(`\r\nCreated new item: ${createdItem}\r\n`);
+        } 
+        else {
+            let id = items[0].id;
+    
+            device.id = id;
+    
+            const { resource: updatedItem } = await deviceContainer
+            .item(id)
+            .replace(device);
+        }
+    },
+
     async getAllDevicesLatestData() {
+        const distinctDevicesQuery = {
+            query: `
+                SELECT Value root
+                FROM (
+                SELECT DISTINCT VALUE c.deviceId
+                FROM c
+                ) as root`
+        } 
+        const {resources: deviceIds} = await deviceContainer.items
+        .query(distinctDevicesQuery)
+        .fetchAll();
+
+        let latestData = deviceIds.map(this.getLatestData);
+
+        await Promise.all(latestData).then(res => {
+            latestData = res.filter(x => x)
+        });
+
+        return latestData;
+    },
+
+
+    async getLatestData(deviceId) {
         const dataQuery = {
-            query: "SELECT c.deviceId, c.distance, MAX(c._ts) AS timestamp FROM c GROUP BY c.deviceId, c.distance",
+            query: `
+                SELECT top 1 c.deviceId, c.distance, c._ts AS timestamp 
+                FROM c 
+                WHERE c.deviceId = @deviceId 
+                ORDER BY c._ts DESC 
+                `,
+            parameters: [{name: "@deviceId", value: deviceId}]
+
         }
         const { resources: data } = await dataContainer.items
         .query(dataQuery)
         .fetchAll();
 
-        return data;
+        return data[0];
     },
 
     async getAllDevices() {
         const deviceQuery = {
-            query: "SELECT c.deviceId, c.name, c.location, c.minDist, c.maxDist, MAX(c._ts) AS timestamp FROM c GROUP BY c.deviceId, c.name, c.location, c.minDist, c.maxDist"
+            query: "SELECT Value root FROM (SELECT c.id, c.deviceId, c.name, c.location, c.minDist, c.maxDist, MAX(c._ts) AS timestamp FROM c GROUP BY c.id, c.deviceId, c.name, c.location, c.minDist, c.maxDist) as root"
         }
         const { resources: devices } = await deviceContainer.items
         .query(deviceQuery)
         .fetchAll();   
-        
         return devices;
     },
 
@@ -52,8 +102,8 @@ const cosmos = {
         }
         const { resources: items } = await dataContainer.items
         .query(querySpec)
-        .fetchAll(); 
-        
+        .fetchAll();
+
         return items;
     }
 }
