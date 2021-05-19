@@ -1,17 +1,5 @@
-# II1302-projekt
+# Project Smartbin
 
-Joakim added this!!!
-
-Joppe was here <3
-
-hejhej
-
-Det här är Williams första commit!
-halloj
-
-Det här är Axels första commit!
-hallojsantjena!
-
-Det här är Joars coola commit!
-Ojojojoj
-
+## Welcome to Project Smartbin
+This project is made to enable businesses and people to see how their trash bins are being used.
+The project goal is to send data from sensors placed on trash bins to the cloud, and that data to be displayed in real-time on the website, including historical data!
