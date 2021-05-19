@@ -2,9 +2,15 @@
   <div>
 
     <base-header class="pb-6 pb-8 pt-8 pt-md-6 bg-gradient-success">
+      
+      <div>
+        <b-button @click="getAllDevices()" style="float: left;">Refresh</b-button>
+        <p style="float: right;">Click on a card to see historical data at the bottom of the page!</p>
+        <div style="clear: both;"></div>
+      </div>
+
       <hr class="my-3">
 
-      <p>Click on a card to see historical data at the bottom of the page!</p>
       <!-- Card stats -->
       <b-row> 
         <b-col v-for="s in smartbins" @click="s.distance && cardClicked(s.deviceId)" :key=s.deviceId xl="3" md="6">
@@ -38,7 +44,7 @@
         </b-col>
 
 
-        <!-- <div>{{allMeasurementData}}</div> -->
+        <div>{{allDevices}}</div>
         <!-- <div>{{searchQuery}}</div> -->
 
 
@@ -312,7 +318,10 @@
         return cosmos.getAllDevicesLatestData().then(res => this.allMeasurementData = res).then(this.loading = false)
       },
       getAllDevices() {
-        cosmos.getAllDevices().then(res => this.allDevices = res)
+        console.log("getAllDevices");
+        cosmos.getAllDevices().then(res => this.allDevices = res);
+        // .then(console.log);
+        console.log("all devices gotten");
       },
       percentage(s) {
         let p = (s.distance - s.minDist) / (s.maxDist - s.minDist) * 100

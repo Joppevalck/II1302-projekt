@@ -85,9 +85,15 @@ const cosmos = {
         const deviceQuery = {
             query: "SELECT Value root FROM (SELECT c.id, c.deviceId, c.name, c.location, c.minDist, c.maxDist, MAX(c._ts) AS timestamp FROM c GROUP BY c.id, c.deviceId, c.name, c.location, c.minDist, c.maxDist) as root"
         }
+
+        const testQuery = {
+            query: "SELECT c.id, c.deviceId, c.name, c.location, c.maxDist, c.minDist FROM c"
+        }
         const { resources: devices } = await deviceContainer.items
-        .query(deviceQuery)
+        .query(testQuery)
         .fetchAll();   
+
+        console.log(devices);
         return devices;
     },
 
