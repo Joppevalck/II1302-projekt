@@ -12,6 +12,34 @@ const deviceContainer = database.container(containerId.device);
 const dataContainer = database.container(containerId.data);
 
 const cosmos = {
+    async createDevice(device) {
+        const querySpec = {
+            query: "SELECT * FROM c WHERE c.deviceId = @deviceId",
+            parameters: [{name: "@deviceId", value: device.deviceId}]
+        };
+
+        const { resources: items } = await deviceContainer.items
+        .query(querySpec)
+        .fetchAll();
+
+        console.log(items);
+
+        if (items.length === 0) {
+            const { resource: createdItem } = await deviceContainer.items.create(device);
+    
+            console.log(`\r\nCreated new item: ${createdItem}\r\n`);
+        } 
+        else {
+            let id = items[0].id;
+    
+            device.id = id;
+    
+            const { resource: updatedItem } = await deviceContainer
+            .item(id)
+            .replace(device);
+        }
+    },
+
     async getAllDevicesLatestData() {
         const distinctDevicesQuery = {
             query: `
@@ -60,8 +88,6 @@ const cosmos = {
         const { resources: devices } = await deviceContainer.items
         .query(deviceQuery)
         .fetchAll();   
-
-        
         return devices;
     },
 
@@ -72,8 +98,8 @@ const cosmos = {
         }
         const { resources: items } = await dataContainer.items
         .query(querySpec)
-        .fetchAll(); 
-        
+        .fetchAll();
+
         return items;
     }
 }

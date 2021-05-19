@@ -19,7 +19,7 @@
              :class="{'navbar-search-dark': type === 'default', 'navbar-search-light': type === 'light'}"
              id="navbar-search-main">
          <b-form-group class="mb-0">
-           <b-input-group class="input-group-alternative input-group-merge">
+           <b-input-group  v-show="$route.name === 'dashboard'" class="input-group-alternative input-group-merge">
              <b-form-input @input="searchChange($event)" placeholder="Search bin by name" type="text"> </b-form-input>
 
              <div class="input-group-append">
