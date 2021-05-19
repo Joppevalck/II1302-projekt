@@ -7,7 +7,7 @@
       <p>Click on a card to see historical data at the bottom of the page!</p>
       <!-- Card stats -->
       <b-row> 
-        <b-col v-for="s in smartbins" @click="s.distance && cardClicked(s.deviceId)" :key=s.deviceId xl="3" md="6">
+        <b-col v-for="s in smartbins" @click="s.distance && cardClicked(s.deviceId)" @mouseover="hoverDevice = s.deviceId" @mouseleave="hoverDevice = null":key=s.deviceId xl="3" md="6">
           <stats-card :title="s.location"
                       :type="iconColor(s)"
                       :sub-title="s.name"
@@ -32,7 +32,7 @@
                 <span class="text-nowrap text-info mr-2">No data to display</span>
               </template>
 
-              <button @click="deleteDevice(s)" title="Delete Smartbin" type="button" class="close" aria-label="Close">
+              <button v-if="s.deviceId === hoverDevice" @click="deleteDevice(s)" title="Delete Smartbin" type="button" class="close" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </template>
@@ -261,7 +261,8 @@
         allMeasurementData: [],
         allDevices: [],
         loading: true,
-        selectedDevice: null
+        selectedDevice: null,
+        hoverDevice: null
       };
     },
     computed: {
@@ -385,7 +386,10 @@
         }
       },
       deleteDevice(device) {
-        cosmos.deleteDevice(device);
+        if (confirm('Are you sure you want to delete device: ' + device.name + '?')) {
+          cosmos.deleteDevice(device)
+          .then(this.getAllDevices());
+        }
       }
     },
     created() {
