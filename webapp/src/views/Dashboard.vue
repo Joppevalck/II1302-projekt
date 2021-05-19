@@ -4,16 +4,18 @@
     <base-header class="pb-6 pb-8 pt-8 pt-md-6 bg-gradient-success">
       
       <div>
-        <b-button @click="getAllDevices()" style="float: left;">Refresh</b-button>
+        <b-button @click="refresh()" style="float: left;">Refresh</b-button>
+        <img v-if="loading" src="fluid-loader.gif" style="height: 40px"/>
         <p style="float: right;">Click on a card to see historical data at the bottom of the page!</p>
         <div style="clear: both;"></div>
       </div>
+
 
       <hr class="my-3">
 
       <!-- Card stats -->
       <b-row> 
-        <b-col v-for="s in smartbins" @click="s.distance && cardClicked(s.deviceId)" @mouseover="hoverDevice = s.deviceId" @mouseleave="hoverDevice = null":key=s.deviceId xl="3" md="6">
+        <b-col v-for="s in smartbins" @click="s.distance && cardClicked(s.deviceId)" @mouseover="hoverDevice = s.deviceId" @mouseleave="hoverDevice = null" :key=s.deviceId xl="3" md="6">
           <stats-card :title="s.location"
                       :type="iconColor(s)"
                       :sub-title="s.name"
@@ -45,8 +47,9 @@
           </stats-card>
         </b-col>
 
+      
 
-        <div>{{allDevices}}</div>
+        <!-- <div>{{allDevices}}</div> -->
         <!-- <div>{{searchQuery}}</div> -->
 
 
@@ -317,14 +320,13 @@
         return cosmos.getDeviceHistoryData(deviceId)
       },
       getAllDevicesLatestData() {
-        this.loading = true;
-        return cosmos.getAllDevicesLatestData().then(res => this.allMeasurementData = res).then(this.loading = false)
+        return cosmos.getAllDevicesLatestData().then(res => this.allMeasurementData = res);
       },
       getAllDevices() {
-        console.log("getAllDevices");
-        cosmos.getAllDevices().then(res => this.allDevices = res);
-        // .then(console.log);
-        console.log("all devices gotten");
+        this.loading = true;
+        cosmos.getAllDevices()
+        .then(res => this.allDevices = res)
+        .then(this.loading = false);
       },
       percentage(s) {
         let p = (s.distance - s.minDist) / (s.maxDist - s.minDist) * 100
@@ -394,11 +396,20 @@
           this.initBigChart(deviceId);
         }
       },
-      deleteDevice(device) {
+      async deleteDevice(device) {
+        this.loading = true;
         if (confirm('Are you sure you want to delete device: ' + device.name + '?')) {
-          cosmos.deleteDevice(device)
-          .then(this.getAllDevices());
+          await cosmos.deleteDevice(device);
+          await new Promise(resolve => setTimeout(resolve, 800));
+          this.getAllDevices();
         }
+      },
+      refresh() {
+        // added to make loading symbol stay active longer
+        console.log("refresh")
+        this.loading = true;
+        setTimeout(() => this.loading = false, 4000);
+        this.getAllDevicesLatestData();
       }
     },
     created() {
