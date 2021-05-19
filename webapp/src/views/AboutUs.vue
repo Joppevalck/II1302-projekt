@@ -7,7 +7,7 @@
           <b-row class="justify-content-center">
             <b-col xl="10" lg="6" md="6" class="px-5">
               <h1 class="text-light">We are the PangPangBois</h1>
-              <p class="text-lead text-white">We are a group of students that has been given the opertunity to work together on a project. This project became this application. </p>
+              <p class="text-lead text-white">We are a group of students that has been given the opportunity to work together on a project. <br>The project resulted in this application. </p>
               <h2 class="text-light">The team</h2>
               <b-row class="justify-content-center">
                 <b-col xl="4" lg="6" md="6" class="px-5" v-for="member in this.team" :key="member.name">
@@ -62,7 +62,7 @@ export default {
           {
             name: "Axel Ström",
             programme: "TIEDB",
-            role: "Customer and Requirement Manager",
+            role: "Customer Relations and Requirements Manager",
             description: "Very adult dud"
           }
         ]
