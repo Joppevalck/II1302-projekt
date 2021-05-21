@@ -27,11 +27,11 @@
                 <p></p>
               </div>
               <div class="col-md-6">
-                <b-form-input v-model="form.maxDist" placeholder="Maximum Distance" required></b-form-input>
+                <b-form-input type="number" min="0" v-model="form.maxDist" placeholder="Maximum Distance" required></b-form-input>
                 <p></p>
               </div>
               <div class="col-md-6">
-                  <b-form-input v-model="form.minDist" placeholder="Minimum Distance" required></b-form-input>
+                  <b-form-input type="number" min="0" v-model="form.minDist" placeholder="Minimum Distance" required></b-form-input>
                 <p></p>
               </div>
 
@@ -58,20 +58,20 @@ export default {
       form: {
         deviceId: '',
         name: '',
-        location: "",
-        maxDist:"",
-        minDist:""
+        location: '',
+        maxDist: null,
+        minDist: null
       }
     }
   },
   methods: {
-    onSubmit(event) {
-      event.preventDefault()
-      cosmos.createDevice(this.form)
-      alert("Your device setup was successful!")
+    async onSubmit(event) {
+      event.preventDefault();
+      await cosmos.createDevice(this.form);
+      alert("Your device setup was successful!");
     },
     onReset(event) {
-      event.preventDefault()
+      event.preventDefault();
       // Reset our form values
       this.form.deviceId = '';
       this.form.name = '';
