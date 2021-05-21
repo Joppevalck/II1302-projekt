@@ -28,7 +28,6 @@ const cosmos = {
         .query(querySpec)
         .fetchAll();
 
-        console.log(items);
 
         if (items.length === 0) {
             const { resource: createdItem } = await deviceContainer.items.create(device);
